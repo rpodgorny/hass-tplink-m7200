@@ -1,0 +1,10 @@
+{
+  "domain": "tplink_m7200",
+  "name": "TP-Link M7200",
+  "codeowners": ["@rpodgorny"],
+  "config_flow": true,
+  "documentation": "https://github.com/rpodgorny/hass-tplink-m7200",
+  "iot_class": "local_polling",
+  "integration_type": "device",
+  "version": "0.1.0"
+}

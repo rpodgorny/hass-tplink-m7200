@@ -1,0 +1,18 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "data": {
+          "host": "Host",
+          "password": "Password"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect / wrong password"
+    },
+    "abort": {
+      "already_configured": "This modem is already configured"
+    }
+  }
+}

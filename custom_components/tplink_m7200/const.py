@@ -1,0 +1,2 @@
+DOMAIN = "tplink_m7200"
+DEFAULT_HOST = "192.168.0.1"
