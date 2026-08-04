@@ -6,5 +6,5 @@
   "documentation": "https://github.com/rpodgorny/hass-tplink-m7200",
   "iot_class": "local_polling",
   "integration_type": "device",
-  "version": "0.1.1"
+  "version": "0.1.2"
 }
