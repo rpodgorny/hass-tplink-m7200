@@ -68,6 +68,15 @@ def _mapper(table: dict[int, str]) -> Callable[[Any], str]:
     return lambda v: table.get(int(v), f"unknown ({v})")
 
 
+# The firmware reports "no IPv6 assigned" using the IPv4 sentinel 0.0.0.0.
+_NO_IP6 = {"", "0.0.0.0", "::", "0:0:0:0:0:0:0:0"}
+
+
+def _ip6(v: Any) -> str | None:
+    s = str(v).strip()
+    return None if s in _NO_IP6 else s
+
+
 SENSORS: tuple[M7SensorDesc, ...] = (
     # "bars"/"devices"/"messages" are not SI units, but HA's history chart only
     # draws a line for entities that HAVE a unit — without one they fall back to
@@ -78,6 +87,7 @@ SENSORS: tuple[M7SensorDesc, ...] = (
     M7SensorDesc(key="roaming", name="Roaming", path=("wan", "roaming"), convert=_mapper(_YESNO), icon="mdi:earth"),
     M7SensorDesc(key="operator", name="Home operator", path=("wan", "operatorName"), icon="mdi:sim"),
     M7SensorDesc(key="wan_ip", name="WAN IP", path=("wan", "ipv4"), icon="mdi:ip"),
+    M7SensorDesc(key="wan_ipv6", name="WAN IPv6", path=("wan", "ipv6"), convert=_ip6, icon="mdi:ip"),
     M7SensorDesc(key="total_data", name="Total data", path=("wan", "totalStatistics"), convert=_num, **_bytes),
     M7SensorDesc(key="today_data", name="Today data", path=("wan", "dailyStatistics"), convert=_num, **_bytes),
     M7SensorDesc(key="rx_speed", name="Download speed", path=("wan", "rxSpeed"), convert=_num, icon="mdi:download-network", **_speed),
@@ -86,6 +96,7 @@ SENSORS: tuple[M7SensorDesc, ...] = (
     M7SensorDesc(key="unread_sms", name="Unread SMS", path=("message", "unreadMessages"), icon="mdi:message-text", convert=_num, native_unit_of_measurement="messages", state_class=SensorStateClass.MEASUREMENT),
     M7SensorDesc(key="battery", name="Battery", path=("battery", "voltage"), native_unit_of_measurement=PERCENTAGE, device_class=SensorDeviceClass.BATTERY),
     # radio quality — diagnostic
+    M7SensorDesc(key="rssi", name="RSSI", path=("wan", "rssi"), convert=_num, native_unit_of_measurement="dBm", device_class=SensorDeviceClass.SIGNAL_STRENGTH, state_class=SensorStateClass.MEASUREMENT, entity_category=EntityCategory.DIAGNOSTIC),
     M7SensorDesc(key="rsrp", name="RSRP", path=("wan", "rsrp"), native_unit_of_measurement="dBm", device_class=SensorDeviceClass.SIGNAL_STRENGTH, entity_category=EntityCategory.DIAGNOSTIC, entity_registry_enabled_default=False),
     M7SensorDesc(key="rsrq", name="RSRQ", path=("wan", "rsrq"), native_unit_of_measurement="dB", entity_category=EntityCategory.DIAGNOSTIC, entity_registry_enabled_default=False),
     M7SensorDesc(key="snr", name="SNR", path=("wan", "snr"), native_unit_of_measurement="dB", entity_category=EntityCategory.DIAGNOSTIC, entity_registry_enabled_default=False),
