@@ -69,7 +69,10 @@ def _mapper(table: dict[int, str]) -> Callable[[Any], str]:
 
 
 SENSORS: tuple[M7SensorDesc, ...] = (
-    M7SensorDesc(key="signal", name="Signal strength", path=("wan", "signalStrength"), icon="mdi:signal"),
+    # "bars"/"devices"/"messages" are not SI units, but HA's history chart only
+    # draws a line for entities that HAVE a unit — without one they fall back to
+    # the colored-bar timeline. Applies to signal, connected_devices, unread_sms.
+    M7SensorDesc(key="signal", name="Signal strength", path=("wan", "signalStrength"), icon="mdi:signal", convert=_num, native_unit_of_measurement="bars", state_class=SensorStateClass.MEASUREMENT),
     M7SensorDesc(key="network_type", name="Network type", path=("wan", "networkType"), convert=_mapper(_NETWORK_TYPE), icon="mdi:antenna"),
     M7SensorDesc(key="connect_status", name="Connection status", path=("wan", "connectStatus"), convert=_mapper(_CONNECT_STATUS), icon="mdi:wan"),
     M7SensorDesc(key="roaming", name="Roaming", path=("wan", "roaming"), convert=_mapper(_YESNO), icon="mdi:earth"),
@@ -79,8 +82,8 @@ SENSORS: tuple[M7SensorDesc, ...] = (
     M7SensorDesc(key="today_data", name="Today data", path=("wan", "dailyStatistics"), convert=_num, **_bytes),
     M7SensorDesc(key="rx_speed", name="Download speed", path=("wan", "rxSpeed"), convert=_num, icon="mdi:download-network", **_speed),
     M7SensorDesc(key="tx_speed", name="Upload speed", path=("wan", "txSpeed"), convert=_num, icon="mdi:upload-network", **_speed),
-    M7SensorDesc(key="connected_devices", name="Connected devices", path=("connectedDevices", "number"), icon="mdi:devices"),
-    M7SensorDesc(key="unread_sms", name="Unread SMS", path=("message", "unreadMessages"), icon="mdi:message-text"),
+    M7SensorDesc(key="connected_devices", name="Connected devices", path=("connectedDevices", "number"), icon="mdi:devices", convert=_num, native_unit_of_measurement="devices", state_class=SensorStateClass.MEASUREMENT),
+    M7SensorDesc(key="unread_sms", name="Unread SMS", path=("message", "unreadMessages"), icon="mdi:message-text", convert=_num, native_unit_of_measurement="messages", state_class=SensorStateClass.MEASUREMENT),
     M7SensorDesc(key="battery", name="Battery", path=("battery", "voltage"), native_unit_of_measurement=PERCENTAGE, device_class=SensorDeviceClass.BATTERY),
     # radio quality — diagnostic
     M7SensorDesc(key="rsrp", name="RSRP", path=("wan", "rsrp"), native_unit_of_measurement="dBm", device_class=SensorDeviceClass.SIGNAL_STRENGTH, entity_category=EntityCategory.DIAGNOSTIC, entity_registry_enabled_default=False),
