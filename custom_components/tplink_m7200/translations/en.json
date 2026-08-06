@@ -5,6 +5,10 @@
         "data": {
           "host": "Host",
           "password": "Password"
+        },
+        "data_description": {
+          "host": "IP address of the modem's web interface. The factory default is 192.168.0.1.",
+          "password": "The modem's admin password — the same one you use for its web UI or the tpMiFi app."
         }
       }
     },

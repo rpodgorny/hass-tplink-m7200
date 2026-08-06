@@ -5,6 +5,7 @@ from __future__ import annotations
 import logging
 from datetime import timedelta
 
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
@@ -12,6 +13,8 @@ from .api import M7200Client, M7200Error
 from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
+
+type M7200ConfigEntry = ConfigEntry[M7200Coordinator]
 
 
 class M7200Coordinator(DataUpdateCoordinator):

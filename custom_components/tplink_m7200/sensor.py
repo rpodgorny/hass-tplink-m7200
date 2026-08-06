@@ -17,7 +17,6 @@ from homeassistant.components.sensor import (
     SensorEntityDescription,
     SensorStateClass,
 )
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
     PERCENTAGE,
     EntityCategory,
@@ -27,8 +26,12 @@ from homeassistant.const import (
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import DOMAIN
+from .coordinator import M7200ConfigEntry
 from .entity import M7200Entity
+
+# Entities are coordinator-driven and have no update() method, so Home
+# Assistant would create no semaphore anyway; stated explicitly.
+PARALLEL_UPDATES = 0
 
 _bytes = dict(
     device_class=SensorDeviceClass.DATA_SIZE,
@@ -119,10 +122,11 @@ SENSORS: tuple[M7SensorDesc, ...] = (
 
 
 async def async_setup_entry(
-    hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
+    hass: HomeAssistant, entry: M7200ConfigEntry, async_add_entities: AddEntitiesCallback
 ) -> None:
-    coordinator = hass.data[DOMAIN][entry.entry_id]
-    async_add_entities(M7200Sensor(coordinator, entry.entry_id, d) for d in SENSORS)
+    async_add_entities(
+        M7200Sensor(entry.runtime_data, entry.entry_id, d) for d in SENSORS
+    )
 
 
 class M7200Sensor(M7200Entity, SensorEntity):
