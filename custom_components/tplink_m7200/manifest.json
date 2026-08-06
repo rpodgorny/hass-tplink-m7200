@@ -4,7 +4,9 @@
   "codeowners": ["@rpodgorny"],
   "config_flow": true,
   "documentation": "https://github.com/rpodgorny/hass-tplink-m7200",
-  "iot_class": "local_polling",
   "integration_type": "device",
+  "iot_class": "local_polling",
+  "issue_tracker": "https://github.com/rpodgorny/hass-tplink-m7200/issues",
+  "requirements": [],
   "version": "0.1.4"
 }
